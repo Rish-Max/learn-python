@@ -13,7 +13,7 @@ def append_to_journal(journal):
     print("Journal appended successfully.")
 
 def gnerate_journal_content(content):
-    current_date_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_date_time = datetime.datetime.now().strftime("%Y-%m-%d %I:%M %p")
     return f"{current_date_time} - {content}\n"
 
 def main():
