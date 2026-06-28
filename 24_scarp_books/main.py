@@ -26,12 +26,22 @@ def scape_next_page(html):
     return f"{BASE_URL}/catalogue/{raw_next_page.find('a')['href']}" if raw_next_page else None
 
 def save_image_locally(image_url, filename):
-    response = requests.get(image_url)
-    if response.status_code == 200:
-        with open("images/" + filename, 'wb') as file:
-            file.write(response.content)
-    else:
-        return None
+    print(f"Downloading: {filename}...", end=" ", flush=True)
+    response = requests.get(image_url, stream=True, timeout=10)
+    response.raise_for_status()
+    total = int(response.headers.get('content-length', 0))
+    downloaded = 0
+
+    with open("images/" + filename, 'wb') as file:
+        for chunk in response.iter_content(chunk_size=100):
+            if chunk:
+                file.write(chunk)
+                downloaded += len(chunk)
+                if total:
+                    pct = downloaded * 100 // total
+                    print(f"\rDownloading: {filename}... {pct}%", end="", flush=True)
+
+    print(f"\rDownloaded: {filename}          ")
 
 def save_content_to_csv(content, filename):
     with open(filename, 'w') as file:
